@@ -31,8 +31,8 @@ public class BookDAO {
         Connection connection = ConnectionUtil.getConnection();
         List<Book> books = new ArrayList<>();
         try {
-            //Write SQL logic here
-            String sql = "change me";
+            // Write SQL logic here to retrieve all books
+            String sql = "SELECT isbn, author_id, title, copies_available FROM Book";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
@@ -42,11 +42,12 @@ public class BookDAO {
                         rs.getInt("copies_available"));
                 books.add(book);
             }
-        }catch(SQLException e){
+        } catch(SQLException e){
             System.out.println(e.getMessage());
         }
         return books;
     }
+    
 
     /**
      * TODO: retrieve a book from the Book table, identified by its isbn.
@@ -56,26 +57,26 @@ public class BookDAO {
     public Book getBookByIsbn(int isbn){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            //Write SQL logic here
-            String sql = "change me";
+            // Write SQL logic here to retrieve a book by ISBN
+            String sql = "SELECT isbn, author_id, title, copies_available FROM Book WHERE isbn = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            //write preparedStatement's setInt method here.
-
+    
+            preparedStatement.setInt(1, isbn);
+    
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
+            if (rs.next()){
                 Book book = new Book(rs.getInt("isbn"),
                         rs.getInt("author_id"),
                         rs.getString("title"),
                         rs.getInt("copies_available"));
                 return book;
             }
-        }catch(SQLException e){
+        } catch(SQLException e){
             System.out.println(e.getMessage());
         }
         return null;
     }
-
+    
     /**
      * TODO: insert a book into the Book table.
      * Unlike some of the other insert problems, the primary key here will be provided by the client as part of the
@@ -87,14 +88,17 @@ public class BookDAO {
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "change me" ;
+            String sql = "INSERT INTO Book (isbn, author_id, title, copies_available) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            //write preparedStatement's setString and setInt methods here.
-
+    
+            preparedStatement.setInt(1, book.getIsbn());
+            preparedStatement.setInt(2, book.getAuthor_id());
+            preparedStatement.setString(3, book.getTitle());
+            preparedStatement.setInt(4, book.getCopies_available());
+    
             preparedStatement.executeUpdate();
             return book;
-        }catch(SQLException e){
+        } catch(SQLException e){
             System.out.println(e.getMessage());
         }
         return null;
@@ -108,12 +112,10 @@ public class BookDAO {
         Connection connection = ConnectionUtil.getConnection();
         List<Book> books = new ArrayList<>();
         try {
-            //Write SQL logic here
-            String sql = "change me";
+            // Write SQL logic here to retrieve books with copies_available > 0
+            String sql = "SELECT isbn, author_id, title, copies_available FROM Book WHERE copies_available > 0";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            //write preparedStatement's setInt method here.
-
+    
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Book book = new Book(rs.getInt("isbn"),
@@ -122,9 +124,9 @@ public class BookDAO {
                         rs.getInt("copies_available"));
                 books.add(book);
             }
-        }catch(SQLException e){
+        } catch(SQLException e){
             System.out.println(e.getMessage());
         }
         return books;
     }
-}
+}    
